@@ -13,6 +13,7 @@ func main() {
 
 	c.Commands = map[string]cli.CommandFactory{
 		"accounts": accountsCmdFactory,
+		"trails":   trailsCmdFactory,
 	}
 
 	exitStatus, err := c.Run()
