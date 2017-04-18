@@ -186,3 +186,83 @@ func (o *Organization) GetTrailArnsForAccount(accountid string) ([]string, error
 	return trails, nil
 
 }
+
+func (o *Organization) PurgeTrailsForAccount(accountid string) ([]string, error) {
+
+	regions := o.GetRegions()
+	role := fmt.Sprintf("arn:aws:iam::%v:role/OrganizationAccountAccessRole", accountid)
+
+	sess := session.Must(session.NewSession())
+	stssvc := sts.New(sess)
+
+	params := &sts.AssumeRoleInput{
+		RoleArn:         aws.String(role),                     // Required
+		RoleSessionName: aws.String("organizer-cloudtrailer"), // Required
+		DurationSeconds: aws.Int64(900),
+	}
+	resp, err := stssvc.AssumeRole(params)
+	if err != nil {
+		fmt.Printf("error: could not assume role %s\n", err.Error())
+		return nil, err
+	}
+
+	trailmap := make(map[string]bool, 100)
+
+	for _, region := range regions {
+
+		config := aws.NewConfig().WithCredentials(
+			credentials.NewStaticCredentials(
+				*resp.Credentials.AccessKeyId,
+				*resp.Credentials.SecretAccessKey,
+				*resp.Credentials.SessionToken,
+			),
+		).WithRegion(region)
+
+		sess = session.New(config)
+		svc := cloudtrail.New(sess)
+
+		params := &cloudtrail.DescribeTrailsInput{
+			IncludeShadowTrails: aws.Bool(true),
+			TrailNameList:       []*string{},
+		}
+		resp, err := svc.DescribeTrails(params)
+
+		if err != nil {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
+			return nil, err
+		}
+
+		// Pretty-print the response data.
+		// fmt.Println(resp)
+		if len(resp.TrailList) == 0 {
+			fmt.Printf("warning: no trails defined in account %s in region %s\n", accountid, region)
+			continue
+		} else {
+			for _, trail := range resp.TrailList {
+				trailmap[*trail.TrailARN] = true
+				params := &cloudtrail.DeleteTrailInput{
+					Name: trail.TrailARN,
+				}
+				_, err := svc.DeleteTrail(params)
+				if err != nil {
+					// Print the error, cast err to awserr.Error to get the Code and
+					// Message from an error.
+					fmt.Println(err.Error())
+					return nil, err
+				}
+			}
+		}
+
+	}
+	trails := make([]string, len(trailmap))
+	i := 0
+	for trail, _ := range trailmap {
+		trails[i] = trail
+		i++
+	}
+
+	return trails, nil
+
+}
