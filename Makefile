@@ -3,7 +3,7 @@ GOPATH := $(shell pwd)
 GOBIN  := $(GOPATH)/bin
 PATH   := $(GOROOT)/bin:$(PATH)
 DEPS   := github.com/mitchellh/cli github.com/aws/aws-sdk-go/aws  github.com/aws/aws-sdk-go/service/ec2 github.com/aws/aws-sdk-go/service/iam
-FILES  := main.go common.go organization.go accounts.go cloudtrail.go
+FILES  := main.go common.go cmds.go organization.go accounts.go cloudtrail.go organization_accounts.go
 
 all: organizer
 

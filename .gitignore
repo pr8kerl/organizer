@@ -7,4 +7,5 @@
 !*.go
 src
 pkg
+vendor
 

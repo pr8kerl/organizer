@@ -12,8 +12,11 @@ func main() {
 	c.Args = os.Args[1:]
 
 	c.Commands = map[string]cli.CommandFactory{
-		"accounts": accountsCmdFactory,
-		"trails":   trailsCmdFactory,
+		"list":           listCmdFactory,
+		"list accounts":  listAccountsCmdFactory,
+		"create":         createCmdFactory,
+		"create account": createAccountCmdFactory,
+		"trails":         trailsCmdFactory,
 	}
 
 	exitStatus, err := c.Run()
