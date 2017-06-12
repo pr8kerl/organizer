@@ -1,0 +1,16 @@
+base:
+  build: .
+  volumes:
+    - .:/go/src/github.com/pr8kerl/organizer
+  working_dir: /go/src/github.com/pr8kerl/organizer
+
+console:
+  extends:
+    service: base
+  entrypoint: bash
+
+make:
+  extends:
+    service: base
+  entrypoint: make 
+

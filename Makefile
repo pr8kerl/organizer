@@ -1,45 +1,42 @@
-GOROOT := /usr/local/go
-GOPATH := $(shell pwd)
+GOPATH := /go
 GOBIN  := $(GOPATH)/bin
 PATH   := $(GOROOT)/bin:$(PATH)
-DEPS   := github.com/mitchellh/cli github.com/aws/aws-sdk-go/aws  github.com/aws/aws-sdk-go/service/ec2 github.com/aws/aws-sdk-go/service/iam
-FILES  := main.go common.go cmds.go organization.go accounts.go cloudtrail.go organization_accounts.go
 
-all: organizer
+all: deps organizer
 
 deps: $(DEPS)
-	GOPATH=$(GOPATH) go get -u $^
+	GOPATH=$(GOPATH) glide install
 
 
-organizer: $(FILES)
+organizer: deps 
     # always format code
-		GOPATH=$(GOPATH) go fmt $^
+		GOPATH=$(GOPATH) go fmt $(glide novendor)
     # vet it
-		GOPATH=$(GOPATH) go tool vet $^
+		GOPATH=$(GOPATH) go tool vet *.go
     # binary
-		GOPATH=$(GOPATH) go build -o $@ -v $^
+		GOPATH=$(GOPATH) go build -o $@ -v $(glide novendor)
 		touch $@
 
-linux64: $(FILES)
+linux64: deps
     # always format code
-		GOPATH=$(GOPATH) go fmt $^
+		GOPATH=$(GOPATH) go fmt $(glide novendor)
     # vet it
-		GOPATH=$(GOPATH) go tool vet $^
+		GOPATH=$(GOPATH) go tool vet *.go
     # binary
-		GOOS=linux GOARCH=amd64 GOPATH=$(GOPATH) go build -o organizer-linux-amd64.bin -v $^
+		GOOS=linux GOARCH=amd64 GOPATH=$(GOPATH) go build -o organizer-linux-amd64.bin -v $(glide novendor)
 		touch organizer-linux-amd64.bin
 
-win64: $(FILES)
+win64: deps
     # always format code
-		GOPATH=$(GOPATH) go fmt $^
+		GOPATH=$(GOPATH) go fmt $(glide novendor)
     # vet it
-		GOPATH=$(GOPATH) go tool vet $^
+		GOPATH=$(GOPATH) go tool vet *.go
     # binary
-		GOOS=windows GOARCH=amd64 GOPATH=$(GOPATH) go build -o organizer-win-amd64.exe -v $^
+		GOOS=windows GOARCH=amd64 GOPATH=$(GOPATH) go build -o organizer-win-amd64.exe -v $(glide novendor)
 		touch organizer-win-amd64.exe
 
 .PHONY: $(DEPS) clean
 
 clean:
-		rm -f organizer organizer-win-amd64.exe organizer-linux-amd64.bin
+		rm -rf organizer organizer-win-amd64.exe organizer-linux-amd64.bin .glide vendor
 

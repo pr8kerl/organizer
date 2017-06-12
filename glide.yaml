@@ -1,0 +1,13 @@
+package: .
+import:
+- package: github.com/aws/aws-sdk-go
+  version: ^1.8.30
+  subpackages:
+  - aws
+  - aws/credentials
+  - aws/endpoints
+  - aws/session
+  - service/cloudtrail
+  - service/organizations
+  - service/sts
+- package: github.com/mitchellh/cli
