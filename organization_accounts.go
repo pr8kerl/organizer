@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/organizations"
-	"time"
 	//	"github.com/kr/pretty"
 )
 
@@ -79,7 +80,7 @@ func (o *Organization) PrintActiveAccounts() error {
 	return nil
 }
 
-func (o *Organization) CreateAccount(name string, email string) (*organizations.Account, error) {
+func (o *Organization) CreateAccount(name string, email string) (*organizations.CreateAccountStatus, error) {
 	input := &organizations.CreateAccountInput{
 		AccountName: aws.String(name),
 		Email:       aws.String(email),
@@ -92,25 +93,27 @@ func (o *Organization) CreateAccount(name string, email string) (*organizations.
 		return nil, err
 	}
 
+	accountStatus := result.CreateAccountStatus
+	statusInput := &organizations.DescribeCreateAccountStatusInput{
+		CreateAccountRequestId: result.CreateAccountStatus.Id,
+	}
 	// wait until the request has completed
-	for *result.CreateAccountStatus.State == "IN_PROGRESS" {
-		fmt.Println("account creation in progress")
+	for *accountStatus.State == "IN_PROGRESS" {
+		fmt.Printf(".")
 		time.Sleep(time.Second * 10)
+		statusOutput, err := o.svc.DescribeCreateAccountStatus(statusInput)
+		if err != nil {
+			err := fmt.Errorf("error: could not check account status: %s", err.Error())
+			return nil, err
+		}
+		accountStatus = statusOutput.CreateAccountStatus
 	}
 
-	if *result.CreateAccountStatus.State == "FAILED" {
+	if *accountStatus.State == "FAILED" {
 		err := fmt.Errorf("error: failed to create account: %s", *result.CreateAccountStatus.FailureReason)
 		return nil, err
 	}
-	account_input := &organizations.DescribeAccountInput{
-		AccountId: result.CreateAccountStatus.AccountId,
-	}
 
-	account_output, err := o.svc.DescribeAccount(account_input)
-	if err != nil {
-		err := fmt.Errorf("error: failed to describe new account %s: %s", *result.CreateAccountStatus.AccountId, *result.CreateAccountStatus.FailureReason)
-		return nil, err
-	}
-	return account_output.Account, nil
+	return accountStatus, nil
 
 }

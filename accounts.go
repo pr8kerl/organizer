@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mitchellh/cli"
 	"os"
 	"strings"
+
+	"github.com/mitchellh/cli"
 )
 
 // List Account
@@ -118,21 +119,21 @@ func (c *CreateAccountCommand) Run(args []string) int {
 
 	fmt.Printf("create account: %s, %s\n", c.AccountName, c.AccountEmail)
 
-	/*
-		org, err := newOrganization()
-		if err != nil {
-			fmt.Printf("error: could not initialize organization: %s\n", err)
-			return 1
-		}
+	org, err := newOrganization()
+	if err != nil {
+		fmt.Printf("error: could not initialize organization: %s\n", err)
+		return 1
+	}
 
-		account, err := org.CreateAccount(c.AccountName, c.AccountEmail)
-		if err != nil {
-			fmt.Printf("error: could not create account: %s\n", err)
-			return 1
-		}
+	account, err := org.CreateAccount(c.AccountName, c.AccountEmail)
+	if err != nil {
+		fmt.Printf("error: could not create account: %s\n", err)
+		return 1
+	}
 
-		fmt.Printf("created account %s successfully id: %s\n", c.AccountName, *account.Id)
-	*/
+	fmt.Printf("created account %s successfully id: %s\n", c.AccountName, *account.Id)
+	fmt.Printf("ACCOUNT_NAME=%s\n", *account.AccountName)
+	fmt.Printf("ACCOUNT_ID=%s\n", *account.Id)
 
 	return 0
 }
