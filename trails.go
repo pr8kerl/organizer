@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mitchellh/cli"
+	"github.com/pr8kerl/organizer/aws"
 	"os"
 )
 
@@ -36,7 +37,7 @@ func (c *TrailsCommand) Run(args []string) int {
 	cmdFlags.Usage = func() { c.Ui.Output(c.Help()); os.Exit(1) }
 	cmdFlags.Parse(args)
 
-	org, err := newOrganization()
+	org, err := aws.NewOrganization()
 	if err != nil {
 		fmt.Printf("error: could not initialize organization: %s\n", err)
 		return 1

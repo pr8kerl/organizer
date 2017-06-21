@@ -1,50 +1,14 @@
-package main
+package aws
 
 import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudtrail"
-	"github.com/aws/aws-sdk-go/service/organizations"
 	"github.com/aws/aws-sdk-go/service/sts"
 )
 
-type Organization struct {
-	svc      *organizations.Organizations
-	accounts []*organizations.Account
-	regions  []string
-}
-
-func newOrganization() (*Organization, error) {
-
-	config := aws.NewConfig().WithRegion("us-east-1")
-	sess := session.New(config)
-	svc := organizations.New(sess)
-	accounts := make([]*organizations.Account, 0, 100)
-	regions := make([]string, 0, 20)
-
-	return &Organization{
-		svc:      svc,
-		accounts: accounts,
-		regions:  regions,
-	}, nil
-
-}
-
-func (o *Organization) GetRegions() []string {
-
-	if len(o.regions) == 0 {
-		p := endpoints.AwsPartition()
-		for id := range p.Regions() {
-			o.regions = append(o.regions, id)
-		}
-	}
-
-	return o.regions
-
-}
 
 func (o *Organization) GetTrailArnsForAccount(accountid string) ([]string, error) {
 
