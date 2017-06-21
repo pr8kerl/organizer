@@ -46,7 +46,6 @@ func (o *Organization) GetBucketsForAccount(accountid string) ([]string, error) 
 	}
 	resp, err := stssvc.AssumeRole(params)
 	if err != nil {
-		fmt.Printf("error: could not assume role %s\n", err.Error())
 		return nil, err
 	}
 
@@ -56,7 +55,7 @@ func (o *Organization) GetBucketsForAccount(accountid string) ([]string, error) 
 			*resp.Credentials.SecretAccessKey,
 			*resp.Credentials.SessionToken,
 		),
-	)
+	).WithRegion(o.region)
 
 	sess = session.New(config)
 	svc := s3.New(sess)

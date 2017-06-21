@@ -7,6 +7,8 @@ all: deps organizer
 deps: $(DEPS)
 	GOPATH=$(GOPATH) glide install
 
+test: deps
+		GOPATH=$(GOPATH) go test -v $(shell glide novendor)
 
 organizer: deps 
     # always format code

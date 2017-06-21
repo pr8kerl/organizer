@@ -5,17 +5,20 @@ import (
 	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/organizations"
+	"github.com/aws/aws-sdk-go/service/organizations/organizationsiface"
 )
 
 type Organization struct {
-	svc      *organizations.Organizations
+	svc      organizationsiface.OrganizationsAPI
 	accounts []*organizations.Account
 	regions  []string
+	region   string
 }
 
 func NewOrganization() (*Organization, error) {
 
-	config := aws.NewConfig().WithRegion("us-east-1")
+	region := "us-east-1"
+	config := aws.NewConfig().WithRegion(region)
 	sess := session.New(config)
 	svc := organizations.New(sess)
 	accounts := make([]*organizations.Account, 0, 100)
@@ -25,6 +28,7 @@ func NewOrganization() (*Organization, error) {
 		svc:      svc,
 		accounts: accounts,
 		regions:  regions,
+		region:   region,
 	}, nil
 
 }
@@ -41,4 +45,3 @@ func (o *Organization) GetRegions() []string {
 	return o.regions
 
 }
-

@@ -9,5 +9,6 @@ import:
   - aws/session
   - service/cloudtrail
   - service/organizations
+  - service/organizationsiface
   - service/sts
 - package: github.com/mitchellh/cli
