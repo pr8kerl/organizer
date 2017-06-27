@@ -106,64 +106,41 @@ func (o *Organization) CreateAccount(name string, email string) (*organizations.
 
 }
 
-func (o *Organization) PollForAccountStatus(accountStatus *organizations.CreateAccountStatus, progress bool) (*organizations.CreateAccountStatus, error) {
+func (o *Organization) WaitForAccountStatus(accountStatus *organizations.CreateAccountStatus) (*organizations.CreateAccountStatus, error) {
 
-  if accountStatus == nil {
+	if accountStatus == nil {
 		err := fmt.Errorf("error: account status object is nil\n")
-    return nil, err
+		return nil, err
 	}
 
 	statusInput := &organizations.DescribeCreateAccountStatusInput{
 		CreateAccountRequestId: accountStatus.Id,
 	}
-  timeout := make(chan bool, 1)
-  result := make(chan *organizations.CreateAccountStatus, 1)
-  pollerr := make(chan error, 1)
 
-  // set timeout for 5 mins max
-  go func() {
-        time.Sleep(time.Minute * 5)
-        timeout <- true
-  }()
+	statusOutput, err := o.svc.DescribeCreateAccountStatus(statusInput)
+	if err != nil {
+		err := fmt.Errorf("error: could not check account status: %s", err.Error())
+		return nil, err
+	}
 
-  go func() {
 	// wait until the request has completed
-	  for *accountStatus.State == "IN_PROGRESS" {
+	for *statusOutput.CreateAccountStatus.State == "IN_PROGRESS" {
 
-  		time.Sleep(time.Second * 10)
-  		statusOutput, err := o.svc.DescribeCreateAccountStatus(statusInput)
-  		if err != nil {
-  			err := fmt.Errorf("error: could not check account status: %s", err.Error())
-  			pollerr <- err
-  		}
-  		accountStatus = statusOutput.CreateAccountStatus
-      if progress {
-        fmt.Printf("account status: %s\n", *accountStatus.State)
-      }
+		time.Sleep(time.Second * 10)
+		statusOutput, err = o.svc.DescribeCreateAccountStatus(statusInput)
+		if err != nil {
+			err := fmt.Errorf("error: could not check account status: %s", err.Error())
+			return nil, err
+		}
+		fmt.Printf("account status: %s\n", *statusOutput.CreateAccountStatus.State)
+	}
 
-  	}
-    if progress {
-      fmt.Printf("account status: %s\n", *accountStatus.State)
-    }
+	fmt.Printf("account status: %s\n", *statusOutput.CreateAccountStatus.State)
 
-  	if *accountStatus.State == "FAILED" {
-  		err := fmt.Errorf("error: failed to create account: %s", *accountStatus.FailureReason)
-  		pollerr <- err
-  	}
+	if *statusOutput.CreateAccountStatus.State == "FAILED" {
+		err := fmt.Errorf("error: failed to create account: %s", *statusOutput.CreateAccountStatus.FailureReason)
+		return nil, err
+	}
 
-    result <- accountStatus
-
-	}()
-
-  // wait for a result
-  select {
-    case <-result:
-  	  return <-result, nil
-    case <-timeout:
-    	err := fmt.Errorf("error: timeout after 5 mins")
-  	  return nil, err
-    case <-pollerr:
-  	  return nil, <-pollerr
-  }
-
+	return statusOutput.CreateAccountStatus, err
 }

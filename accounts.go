@@ -131,7 +131,7 @@ func (c *CreateAccountCommand) Run(args []string) int {
 		fmt.Printf("error: could not create account: %s\n", err)
 		return 1
 	}
-	account, err := org.PollForAccountStatus(status, true)
+	account, err := org.WaitForAccountStatus(status)
 	if err != nil {
 		fmt.Printf("error: could not get account status: %s\n", err)
 		return 1

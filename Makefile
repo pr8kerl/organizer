@@ -2,7 +2,7 @@ GOPATH := /go
 GOBIN  := $(GOPATH)/bin
 PATH   := $(GOROOT)/bin:$(PATH)
 
-all: deps organizer
+all: deps test organizer
 
 deps: $(DEPS)
 	GOPATH=$(GOPATH) glide install
