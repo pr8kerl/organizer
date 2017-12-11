@@ -1,10 +1,10 @@
-hash: 31785be2031200f17e3b827e8d1411cb0631bdfe6fd43fd2423d5e0d82e68187
-updated: 2017-06-12T01:59:40.968876129Z
+hash: b87282361cdd86a3ec21c91ddf0b1551a5cba66d9db227913d2df6eb7e97b9c3
+updated: 2017-11-29T10:59:37.990834743+11:00
 imports:
 - name: github.com/armon/go-radix
   version: 4239b77079c7b5d1243b7b4736304ce8ddb6f0f2
 - name: github.com/aws/aws-sdk-go
-  version: c861d27d0304a79f727e9a8a4e2ac1e74602fdc0
+  version: 0c22c3d22be15d3be3d22b8dedabbf5dd4304730
   subpackages:
   - aws
   - aws/awserr
@@ -29,9 +29,15 @@ imports:
   - private/protocol/query
   - private/protocol/query/queryutil
   - private/protocol/rest
+  - private/protocol/restxml
   - private/protocol/xml/xmlutil
+  - service/cloudfront
   - service/cloudtrail
+  - service/iam
   - service/organizations
+  - service/organizations/organizationsiface
+  - service/organizationsiface
+  - service/s3
   - service/sts
 - name: github.com/bgentry/speakeasy
   version: 4aabc24848ce5fd31929f7d1e4ea74d3709c14cd

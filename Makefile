@@ -1,14 +1,14 @@
-GOPATH := /go
+GOPATH ?= /go
 GOBIN  := $(GOPATH)/bin
 PATH   := $(GOROOT)/bin:$(PATH)
 
 all: deps test organizer
 
-deps: $(DEPS)
+deps: 
 	GOPATH=$(GOPATH) glide install
 
 test: deps
-		GOPATH=$(GOPATH) go test -v $(shell glide novendor)
+		GOPATH=$(GOPATH) go test -v $(glide novendor)
 
 organizer: deps 
     # always format code

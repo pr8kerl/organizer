@@ -4,4 +4,10 @@ So you are using AWS Organizations. You can authenticate to the **master** billi
 
 This tool will allow you to list accounts and perform basic actions across multiple accounts at once.
 
+## build
+
+```
+docker-compose run make
+```
+
 

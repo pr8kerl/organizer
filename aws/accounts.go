@@ -66,25 +66,23 @@ func (o *Organization) PrintAccounts() error {
 
 func (o *Organization) PrintActiveAccounts() error {
 
-	accounts, err := o.GetAccounts()
+	accounts, err := o.GetActiveAccounts()
 	if err != nil {
 		return err
 	}
 
 	for _, account := range accounts {
-		if *account.Status == "ACTIVE" {
-			// for a newly created account, it can take a while for all the account fields
-			// to be populated. So to avoid a panic...
-			var name string = "unknown"
-			var id string = "unknown"
-			if account.Id != nil {
-				id = *account.Id
-			}
-			if account.Name != nil {
-				name = *account.Name
-			}
-			fmt.Printf("%s,%s\n", id, name)
+		// for a newly created account, it can take a while for all the account fields
+		// to be populated. So to avoid a panic...
+		var name string = "unknown"
+		var id string = "unknown"
+		if account.Id != nil {
+			id = *account.Id
 		}
+		if account.Name != nil {
+			name = *account.Name
+		}
+		fmt.Printf("%s,%s\n", id, name)
 	}
 	return nil
 }

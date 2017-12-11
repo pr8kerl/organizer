@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/mitchellh/cli"
 	"os"
+
+	"github.com/mitchellh/cli"
 )
 
 func main() {
@@ -12,12 +13,14 @@ func main() {
 	c.Args = os.Args[1:]
 
 	c.Commands = map[string]cli.CommandFactory{
-		"list":           listCmdFactory,
-		"list accounts":  listAccountsCmdFactory,
-		"list buckets":   listBucketsCmdFactory,
-		"create":         createCmdFactory,
-		"create account": createAccountCmdFactory,
-		"trails":         trailsCmdFactory,
+		"list":            listCmdFactory,
+		"list accounts":   listAccountsCmdFactory,
+		"list buckets":    listBucketsCmdFactory,
+		"list cloudfront": listCloudfrontsCmdFactory,
+		"list users":      listUsersCmdFactory,
+		"create":          createCmdFactory,
+		"create account":  createAccountCmdFactory,
+		"trails":          trailsCmdFactory,
 	}
 
 	exitStatus, err := c.Run()

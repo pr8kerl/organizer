@@ -13,7 +13,6 @@ import (
 // List Account
 type ListBucketsCommand struct {
 	AccountId string
-	Region    string
 	Ui        cli.Ui
 }
 
@@ -27,7 +26,6 @@ func listBucketsCmdFactory() (cli.Command, error) {
 
 	return &ListBucketsCommand{
 		AccountId: "",
-		Region:    "",
 		Ui:        ui,
 	}, nil
 }
