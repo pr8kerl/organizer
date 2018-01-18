@@ -131,7 +131,6 @@ func (o *Organization) PrintUsers() error {
 
 	for accountid, accountusers := range users {
 		for _, user := range accountusers {
-			fmt.Printf("%s,%s\n", accountid, *user.UserName)
 			fmt.Printf("%s,%s,%s,%s\n", accountid, *user.UserName, user.CreateDate, user.PasswordLastUsed)
 		}
 	}
