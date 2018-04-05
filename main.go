@@ -15,6 +15,7 @@ func main() {
 	c.Commands = map[string]cli.CommandFactory{
 		"list":            listCmdFactory,
 		"list accounts":   listAccountsCmdFactory,
+		"list aliases":    listAliasesCmdFactory,
 		"list buckets":    listBucketsCmdFactory,
 		"list cloudfront": listCloudfrontsCmdFactory,
 		"list users":      listUsersCmdFactory,

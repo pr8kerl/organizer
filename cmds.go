@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/mitchellh/cli"
 	"os"
 	"strings"
+
+	"github.com/mitchellh/cli"
 )
 
 const (
